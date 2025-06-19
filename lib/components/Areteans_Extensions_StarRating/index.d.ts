@@ -17,6 +17,8 @@ interface AreteansExtensionsStarRatingProps extends PConnFieldProps {
     animationScale?: number;
     showClear?: boolean;
     rtl?: boolean;
+    fullStarIcon?: React.ReactNode;
+    halfStarIcon?: React.ReactNode;
 }
 export declare const formatExists: (formatterVal: string) => boolean;
 export declare const textFormatter: (formatter: string, value: string) => any;

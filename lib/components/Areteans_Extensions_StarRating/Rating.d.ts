@@ -14,6 +14,8 @@ interface RatingProps {
     animationScale?: number;
     showClear?: boolean;
     rtl?: boolean;
+    fullStarIcon?: React.ReactNode;
+    halfStarIcon?: React.ReactNode;
 }
 declare const Rating: React.FC<RatingProps>;
 export default Rating;

@@ -92,7 +92,9 @@ const Rating: React.FC<RatingProps> = ({
       newRating = star - 0.5;
     }
     setRating(newRating);
-    onChange && onChange(newRating);
+    if (onChange) {
+      onChange(newRating);
+    }
   };
 
   const handleKeyDown = (
@@ -102,14 +104,18 @@ const Rating: React.FC<RatingProps> = ({
     if (readOnly) return;
     if (e.key === "Enter" || e.key === " ") {
       setRating(star);
-      onChange && onChange(star);
+      if (onChange) {
+        onChange(star);
+      }
     }
   };
 
   const handleClear = () => {
     if (readOnly) return;
     setRating(0);
-    onChange && onChange(0);
+    if (onChange) {
+      onChange(0);
+    }
   };
 
   const getStarIcon = (star: number) => {
