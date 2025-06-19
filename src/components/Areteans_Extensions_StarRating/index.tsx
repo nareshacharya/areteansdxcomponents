@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from "react";
 import {
-  Input,
   FieldValueList,
   Text,
   EmailDisplay,
@@ -14,7 +13,6 @@ import "./create-nonce";
 // include in bundle
 import handleEvent from "./event-utils";
 import StatusWorkRenderer from "./StatusWork";
-import { suggestionsHandler } from "./suggestions-handler";
 import Rating from "./Rating";
 
 import StyledAreteansExtensionsStarRatingWrapper from "./styles";
@@ -97,21 +95,15 @@ export const textFormatter = (formatter: string, value: string) => {
 
 // Duplicated runtime code from Constellation Design System Component
 
-// props passed in combination of props from property panel (config.json) and run time props from Constellation
-// any default values in config.pros should be set in defaultProps at bottom of this file
 function AreteansExtensionsStarRating(
   props: AreteansExtensionsStarRatingProps,
 ) {
   const {
     getPConnect,
-    placeholder,
     validatemessage,
     label,
     hideLabel = false,
-    helperText,
     testId,
-    fieldMetadata = {},
-    additionalProps = {},
     displayMode,
     displayAsStatus,
     variant = "inline",
@@ -133,7 +125,6 @@ function AreteansExtensionsStarRating(
   const actions = pConn.getActionsApi();
   const stateProps = pConn.getStateProps() as StateProps;
   const propName: string = stateProps.value;
-  const maxLength = fieldMetadata?.maxLength;
   const hasValueChange = useRef(false);
 
   let { value, readOnly = false, required = false, disabled = false } = props;
@@ -162,9 +153,6 @@ function AreteansExtensionsStarRating(
     }
   }, [validatemessage, hasSuggestions, myStatus]);
 
-  const onResolveSuggestionHandler = (accepted: boolean) => {
-    suggestionsHandler(accepted, pConn, setStatus);
-  };
   // Override the value to render as status work when prop passed to display as status
   if (displayAsStatus) {
     value = StatusWorkRenderer({ value });
@@ -224,34 +212,13 @@ function AreteansExtensionsStarRating(
     );
   }
 
-  const handleChange = (event: any) => {
-    if (hasSuggestions) {
-      setStatus(undefined);
-    }
-    setInputValue(event.target.value);
-    if (value !== event.target.value) {
-      handleEvent(actions, "change", propName, event.target.value);
-      hasValueChange.current = true;
-    }
-  };
-
-  const handleBlur = (event: any) => {
-    if ((!value || hasValueChange.current) && !readOnly) {
-      handleEvent(actions, "blur", propName, event.target.value);
-      if (hasSuggestions) {
-        pConn.ignoreSuggestion("");
-      }
-      hasValueChange.current = false;
-    }
-  };
-
   return (
     <StyledAreteansExtensionsStarRatingWrapper>
       <Rating
         value={inputValue}
         onChange={(val: number) => {
           setInputValue(val);
-          handleEvent(actions, "change", propName, val);
+          handleEvent(actions, "change", propName, val.toString());
           hasValueChange.current = true;
         }}
         readOnly={readOnly}
