@@ -24,7 +24,7 @@ Find the latest documentation on using **DX Component Builder** [here](https://d
 
 # Areteans Extensions Star Rating
 
-A customizable Star Rating React component for Pega DX components, supporting half-stars, custom colors, labels, RTL, and more.
+A customizable Star Rating React component for Pega DX components, supporting half-stars, custom icons, custom colors, labels, RTL, and more.
 
 ## Features
 
@@ -36,6 +36,7 @@ A customizable Star Rating React component for Pega DX components, supporting ha
 - RTL (right-to-left) support
 - Keyboard accessible
 - Custom labels
+- **Custom SVG or image icons for full and half stars**
 
 ## Installation
 
@@ -45,7 +46,7 @@ A customizable Star Rating React component for Pega DX components, supporting ha
    npm install
    ```
 
-2. **(Optional) If using outside Storybook, ensure FontAwesome is loaded:**
+2. **(Optional) If using outside Storybook, ensure FontAwesome is loaded (for fallback icons):**
 
    Add this to your HTML `<head>`:
 
@@ -66,6 +67,27 @@ import Rating from "./src/components/Areteans_Extensions_StarRating/Rating";
 function App() {
   const [value, setValue] = useState(3);
 
+  // Example custom SVGs
+  const CustomFullStar = (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="orange">
+      <polygon points="12,2 15,9 22,9.5 17,14.5 18.5,22 12,18 5.5,22 7,14.5 2,9.5 9,9" />
+    </svg>
+  );
+  const CustomHalfStar = (
+    <svg width="24" height="24" viewBox="0 0 24 24">
+      <defs>
+        <linearGradient id="half">
+          <stop offset="50%" stopColor="orange" />
+          <stop offset="50%" stopColor="#ccc" />
+        </linearGradient>
+      </defs>
+      <polygon
+        points="12,2 15,9 22,9.5 17,14.5 18.5,22 12,18 5.5,22 7,14.5 2,9.5 9,9"
+        fill="url(#half)"
+      />
+    </svg>
+  );
+
   return (
     <Rating
       value={value}
@@ -79,6 +101,8 @@ function App() {
       showClear={true}
       rtl={false}
       labels={["Poor", "Fair", "Good", "Very Good", "Excellent"]}
+      fullStarIcon={CustomFullStar}
+      halfStarIcon={CustomHalfStar}
     />
   );
 }
@@ -105,21 +129,23 @@ import AreteansExtensionsStarRating from "./src/components/Areteans_Extensions_S
 
 ## Props
 
-| Prop               | Type     | Default | Description                      |
-| ------------------ | -------- | ------- | -------------------------------- |
-| `value`            | number   | 0       | Current rating value             |
-| `onChange`         | function | —       | Callback when rating changes     |
-| `readOnly`         | boolean  | false   | If true, disables interaction    |
-| `allowHalf`        | boolean  | false   | Allow half-star selection        |
-| `showRatingNumber` | boolean  | true    | Show rating number next to stars |
-| `starCount`        | number   | 5       | Number of stars                  |
-| `fullColor`        | string   | "gold"  | Color for full stars             |
-| `halfColor`        | string   | "gold"  | Color for half stars             |
-| `emptyColor`       | string   | "#ccc"  | Color for empty stars            |
-| `labels`           | string[] | []      | Labels for each rating value     |
-| `animationScale`   | number   | 1.2     | Scale animation on hover         |
-| `showClear`        | boolean  | false   | Show clear/reset button          |
-| `rtl`              | boolean  | false   | Right-to-left layout             |
+| Prop               | Type      | Default | Description                               |
+| ------------------ | --------- | ------- | ----------------------------------------- |
+| `value`            | number    | 0       | Current rating value                      |
+| `onChange`         | function  | —       | Callback when rating changes              |
+| `readOnly`         | boolean   | false   | If true, disables interaction             |
+| `allowHalf`        | boolean   | false   | Allow half-star selection                 |
+| `showRatingNumber` | boolean   | true    | Show rating number next to stars          |
+| `starCount`        | number    | 5       | Number of stars                           |
+| `fullColor`        | string    | "gold"  | Color for full stars                      |
+| `halfColor`        | string    | "gold"  | Color for half stars                      |
+| `emptyColor`       | string    | "#ccc"  | Color for empty stars                     |
+| `labels`           | string[]  | []      | Labels for each rating value              |
+| `animationScale`   | number    | 1.2     | Scale animation on hover                  |
+| `showClear`        | boolean   | false   | Show clear/reset button                   |
+| `rtl`              | boolean   | false   | Right-to-left layout                      |
+| `fullStarIcon`     | ReactNode | —       | Custom SVG/image for full star (optional) |
+| `halfStarIcon`     | ReactNode | —       | Custom SVG/image for half star (optional) |
 
 ## Storybook
 

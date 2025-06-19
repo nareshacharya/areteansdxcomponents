@@ -24,7 +24,6 @@ interface AreteansExtensionsStarRatingProps extends PConnFieldProps {
   hasSuggestions?: boolean;
   variant?: any;
   formatter: string;
-  // Add Rating props below
   allowHalf?: boolean;
   showRatingNumber?: boolean;
   starCount?: number;
@@ -35,6 +34,8 @@ interface AreteansExtensionsStarRatingProps extends PConnFieldProps {
   animationScale?: number;
   showClear?: boolean;
   rtl?: boolean;
+  fullStarIcon?: React.ReactNode;
+  halfStarIcon?: React.ReactNode;
 }
 
 // interface for StateProps object
@@ -119,6 +120,8 @@ function AreteansExtensionsStarRating(
     animationScale,
     showClear,
     rtl,
+    fullStarIcon,
+    halfStarIcon,
   } = props;
   const { formatter } = props;
   const pConn = getPConnect();
@@ -232,6 +235,8 @@ function AreteansExtensionsStarRating(
         animationScale={animationScale}
         showClear={showClear}
         rtl={rtl}
+        fullStarIcon={fullStarIcon}
+        halfStarIcon={halfStarIcon}
       />
     </StyledAreteansExtensionsStarRatingWrapper>
   );

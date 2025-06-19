@@ -2,6 +2,17 @@ import { render, fireEvent, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import Rating from "./Rating";
 
+const CustomFullStar = (
+  <svg data-testid="custom-full-star" width="24" height="24">
+    <circle cx="12" cy="12" r="10" fill="red" />
+  </svg>
+);
+const CustomHalfStar = (
+  <svg data-testid="custom-half-star" width="24" height="24">
+    <rect x="0" y="0" width="12" height="24" fill="blue" />
+  </svg>
+);
+
 describe("Rating component", () => {
   it("renders the correct number of stars", () => {
     render(<Rating starCount={7} />);
@@ -20,7 +31,6 @@ describe("Rating component", () => {
     const star = screen.getAllByRole("radio")[2];
     fireEvent.mouseMove(star, { clientX: 0 }); // Simulate left half
     fireEvent.click(star, { clientX: 0 });
-    // Optionally, add an assertion if your component renders a half-star icon
     expect(screen.getAllByRole("radio")[2]).toBeInTheDocument();
   });
 
@@ -43,8 +53,20 @@ describe("Rating component", () => {
 
   it("renders the component and checks for label", () => {
     render(<Rating />);
-    // Replace "label" with the actual label text if your component renders one
-    // For now, this checks that the component renders at least one radio input
     expect(screen.getAllByRole("radio").length).toBeGreaterThan(0);
+  });
+
+  it("renders custom full and half star icons", () => {
+    render(
+      <Rating
+        value={1}
+        fullStarIcon={CustomFullStar}
+        halfStarIcon={CustomHalfStar}
+      />,
+    );
+    expect(screen.getByTestId("custom-full-star")).toBeInTheDocument();
+    // To test half star, set value to 0.5 and allowHalf
+    render(<Rating value={0.5} allowHalf halfStarIcon={CustomHalfStar} />);
+    expect(screen.getByTestId("custom-half-star")).toBeInTheDocument();
   });
 });

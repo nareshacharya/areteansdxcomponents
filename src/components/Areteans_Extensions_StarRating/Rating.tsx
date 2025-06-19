@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./Rating.css";
 
 interface RatingProps {
@@ -15,7 +15,47 @@ interface RatingProps {
   animationScale?: number;
   showClear?: boolean;
   rtl?: boolean;
+  fullStarIcon?: React.ReactNode;
+  halfStarIcon?: React.ReactNode;
 }
+
+const getDefaultFullStar = (color: string) => (
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill={color}
+    stroke={color}
+    strokeWidth="1"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <polygon points="12,2 15,9 22,9.5 17,14.5 18.5,22 12,18 5.5,22 7,14.5 2,9.5 9,9" />
+  </svg>
+);
+
+const getDefaultHalfStar = (fullColor: string, emptyColor: string) => (
+  <svg
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    aria-hidden="true"
+    strokeLinejoin="round"
+  >
+    <defs>
+      <linearGradient id="half-grad" x1="0" x2="1" y1="0" y2="0">
+        <stop offset="50%" stopColor={fullColor} />
+        <stop offset="50%" stopColor={emptyColor} />
+      </linearGradient>
+    </defs>
+    <polygon
+      points="12,2 15,9 22,9.5 17,14.5 18.5,22 12,18 5.5,22 7,14.5 2,9.5 9,9"
+      fill="url(#half-grad)"
+      stroke={fullColor}
+      strokeWidth="1"
+    />
+  </svg>
+);
 
 const Rating: React.FC<RatingProps> = ({
   value = 0,
@@ -31,6 +71,8 @@ const Rating: React.FC<RatingProps> = ({
   animationScale = 1.2,
   showClear = false,
   rtl = false,
+  fullStarIcon,
+  halfStarIcon,
 }) => {
   const [rating, setRating] = useState(value);
   const [hovered, setHovered] = useState<number | null>(null);
@@ -46,13 +88,11 @@ const Rating: React.FC<RatingProps> = ({
   ) => {
     if (readOnly) return;
     let newRating = star;
-    if (allowHalf) {
-      const { left, width } = e.currentTarget.getBoundingClientRect();
-      const x = e.clientX - left;
-      newRating = x < width / 2 ? star - 0.5 : star;
+    if (allowHalf && e.nativeEvent.offsetX < e.currentTarget.offsetWidth / 2) {
+      newRating = star - 0.5;
     }
     setRating(newRating);
-    onChange?.(newRating);
+    onChange && onChange(newRating);
   };
 
   const handleKeyDown = (
@@ -60,68 +100,40 @@ const Rating: React.FC<RatingProps> = ({
     star: number,
   ) => {
     if (readOnly) return;
-    const currentIndex = star - 1;
-    if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
-      e.preventDefault();
+    if (e.key === "Enter" || e.key === " ") {
       setRating(star);
-      onChange?.(star);
-    } else if (
-      (e.key === "ArrowLeft" && !rtl) ||
-      (e.key === "ArrowRight" && rtl) ||
-      e.key === "ArrowDown"
-    ) {
-      e.preventDefault();
-      const step = allowHalf ? 0.5 : 1;
-      const newRating = Math.max(step, rating - step);
-      setRating(newRating);
-      onChange?.(newRating);
-      const prevIndex = Math.max(0, currentIndex - 1);
-      starRefs.current[prevIndex]?.focus();
-    } else if (
-      (e.key === "ArrowRight" && !rtl) ||
-      (e.key === "ArrowLeft" && rtl) ||
-      e.key === "ArrowUp"
-    ) {
-      e.preventDefault();
-      const step = allowHalf ? 0.5 : 1;
-      const newRating = Math.min(starCount, rating + step);
-      setRating(newRating);
-      onChange?.(newRating);
-      const nextIndex = Math.min(starCount - 1, currentIndex + 1);
-      starRefs.current[nextIndex]?.focus();
+      onChange && onChange(star);
     }
   };
 
   const handleClear = () => {
     if (readOnly) return;
     setRating(0);
-    onChange?.(0);
+    onChange && onChange(0);
   };
 
   const getStarIcon = (star: number) => {
-    if ((hovered ?? rating) >= star) {
+    const displayValue = hovered !== null ? hovered : rating;
+    if (displayValue >= star) {
+      return <span>{fullStarIcon || getDefaultFullStar(fullColor)}</span>;
+    } else if (allowHalf && displayValue >= star - 0.5) {
       return (
-        <i
-          className="fa-solid fa-star"
-          aria-hidden="true"
-          style={{ color: fullColor, fontSize: 24 }}
-        ></i>
-      );
-    } else if (allowHalf && (hovered ?? rating) >= star - 0.5) {
-      return (
-        <i
-          className="fa-solid fa-star-half-stroke"
-          aria-hidden="true"
-          style={{ color: halfColor, fontSize: 24 }}
-        ></i>
+        <span>{halfStarIcon || getDefaultHalfStar(halfColor, emptyColor)}</span>
       );
     } else {
       return (
-        <i
-          className="fa-regular fa-star"
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill={emptyColor}
+          stroke={emptyColor}
+          strokeWidth="1"
+          strokeLinejoin="round"
           aria-hidden="true"
-          style={{ color: emptyColor, fontSize: 24 }}
-        ></i>
+        >
+          <polygon points="12,2 15,9 22,9.5 17,14.5 18.5,22 12,18 5.5,22 7,14.5 2,9.5 9,9" />
+        </svg>
       );
     }
   };
