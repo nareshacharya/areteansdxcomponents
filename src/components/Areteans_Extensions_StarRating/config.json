@@ -11,6 +11,7 @@
   "subtype": "Text",
   "icon": "images/pz-text-input-active.svg",
   "properties": [
+
     {
       "name": "label",
       "label": "Field label",
@@ -47,7 +48,60 @@
           "label": "Width (px)",
           "format": "NUMBER",
           "visibility": "$this.columnWidth == 'custom'"
-        }
+        },
+        {
+    "allowHalf": {
+      "type": "boolean",
+      "default": false,
+      "description": "Allow half-star selection"
+    },
+    "showRatingNumber": {
+      "type": "boolean",
+      "default": true,
+      "description": "Show rating number next to stars"
+    },
+    "starCount": {
+      "type": "number",
+      "default": 5,
+      "description": "Number of stars"
+    },
+    "fullColor": {
+      "type": "string",
+      "default": "gold",
+      "description": "Color for full stars"
+    },
+    "halfColor": {
+      "type": "string",
+      "default": "gold",
+      "description": "Color for half stars"
+    },
+    "emptyColor": {
+      "type": "string",
+      "default": "#ccc",
+      "description": "Color for empty stars"
+    },
+    "labels": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": [],
+      "description": "Labels for each rating value"
+    },
+    "animationScale": {
+      "type": "number",
+      "default": 1.2,
+      "description": "Scale animation on hover"
+    },
+    "showClear": {
+      "type": "boolean",
+      "default": false,
+      "description": "Show clear/reset button"
+    },
+    "rtl": {
+      "type": "boolean",
+      "default": false,
+      "description": "Right-to-left layout"
+    }
+  }
       ]
     },
     {
@@ -111,58 +165,5 @@
     "isFormWidth" : false,
     "isContainerWidth" : false
   },
-  "displayName": "Star Rating",
-  "props": {
-    "allowHalf": {
-      "type": "boolean",
-      "default": false,
-      "description": "Allow half-star selection"
-    },
-    "showRatingNumber": {
-      "type": "boolean",
-      "default": true,
-      "description": "Show rating number next to stars"
-    },
-    "starCount": {
-      "type": "number",
-      "default": 5,
-      "description": "Number of stars"
-    },
-    "fullColor": {
-      "type": "string",
-      "default": "gold",
-      "description": "Color for full stars"
-    },
-    "halfColor": {
-      "type": "string",
-      "default": "gold",
-      "description": "Color for half stars"
-    },
-    "emptyColor": {
-      "type": "string",
-      "default": "#ccc",
-      "description": "Color for empty stars"
-    },
-    "labels": {
-      "type": "array",
-      "items": { "type": "string" },
-      "default": [],
-      "description": "Labels for each rating value"
-    },
-    "animationScale": {
-      "type": "number",
-      "default": 1.2,
-      "description": "Scale animation on hover"
-    },
-    "showClear": {
-      "type": "boolean",
-      "default": false,
-      "description": "Show clear/reset button"
-    },
-    "rtl": {
-      "type": "boolean",
-      "default": false,
-      "description": "Right-to-left layout"
-    }
-  }
+  "displayName": "Star Rating"
 }
