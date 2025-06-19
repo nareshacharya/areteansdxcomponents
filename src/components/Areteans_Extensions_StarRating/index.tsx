@@ -1,23 +1,42 @@
-import { useEffect, useState, useRef } from 'react';
-import { Input, FieldValueList, Text, EmailDisplay, PhoneDisplay, URLDisplay, withConfiguration } from '@pega/cosmos-react-core';
-import type { PConnFieldProps } from './PConnProps';
-import './create-nonce';
+import { useEffect, useState, useRef } from "react";
+import {
+  Input,
+  FieldValueList,
+  Text,
+  EmailDisplay,
+  PhoneDisplay,
+  URLDisplay,
+  withConfiguration,
+} from "@pega/cosmos-react-core";
+import type { PConnFieldProps } from "./PConnProps";
+import "./create-nonce";
 
 // include in bundle
 import handleEvent from "./event-utils";
 import StatusWorkRenderer from "./StatusWork";
-import { suggestionsHandler } from './suggestions-handler';
+import { suggestionsHandler } from "./suggestions-handler";
+import Rating from "./Rating";
 
-import StyledAreteansExtensionsStarRatingWrapper from './styles';
+import StyledAreteansExtensionsStarRatingWrapper from "./styles";
 
 // interface for props
 interface AreteansExtensionsStarRatingProps extends PConnFieldProps {
-  // If any, enter additional props that only exist on TextInput here
   displayAsStatus?: boolean;
   isTableFormatter?: boolean;
   hasSuggestions?: boolean;
   variant?: any;
   formatter: string;
+  // Add Rating props below
+  allowHalf?: boolean;
+  showRatingNumber?: boolean;
+  starCount?: number;
+  fullColor?: string;
+  halfColor?: string;
+  emptyColor?: string;
+  labels?: string[];
+  animationScale?: number;
+  showClear?: boolean;
+  rtl?: boolean;
 }
 
 // interface for StateProps object
@@ -27,40 +46,48 @@ interface StateProps {
 }
 
 export const formatExists = (formatterVal: string) => {
-    const formatterValues = [
-      "TextInput",
-      "WorkStatus",
-      "RichText",
-      "Email",
-      "Phone",
-      "URL",
-      "Operator"
-    ];
-    let isformatter = false;
-    if (formatterValues.includes(formatterVal)) {
-      isformatter = true;
-    }
-    return isformatter;
-  };
-
+  const formatterValues = [
+    "TextInput",
+    "WorkStatus",
+    "RichText",
+    "Email",
+    "Phone",
+    "URL",
+    "Operator",
+  ];
+  let isformatter = false;
+  if (formatterValues.includes(formatterVal)) {
+    isformatter = true;
+  }
+  return isformatter;
+};
 
 export const textFormatter = (formatter: string, value: string) => {
   let displayComponent: any = null;
-  switch(formatter){
-    case "TextInput" : {
+  switch (formatter) {
+    case "TextInput": {
       displayComponent = value;
       break;
     }
-    case "Email" : {
-      displayComponent = (<EmailDisplay value={value} displayText={value} variant="link" />);
+    case "Email": {
+      displayComponent = (
+        <EmailDisplay value={value} displayText={value} variant="link" />
+      );
       break;
     }
-    case "Phone" : {
-      displayComponent = (<PhoneDisplay value={value} variant="link" />);
+    case "Phone": {
+      displayComponent = <PhoneDisplay value={value} variant="link" />;
       break;
     }
-    case "URL" : {
-      displayComponent = (<URLDisplay target="_blank" value={value} displayText={value} variant="link" />);
+    case "URL": {
+      displayComponent = (
+        <URLDisplay
+          target="_blank"
+          value={value}
+          displayText={value}
+          variant="link"
+        />
+      );
       break;
     }
     // no default
@@ -68,14 +95,14 @@ export const textFormatter = (formatter: string, value: string) => {
   return displayComponent;
 };
 
-
-
 // Duplicated runtime code from Constellation Design System Component
 
 // props passed in combination of props from property panel (config.json) and run time props from Constellation
 // any default values in config.pros should be set in defaultProps at bottom of this file
-function AreteansExtensionsStarRating(props: AreteansExtensionsStarRatingProps) {
- const {
+function AreteansExtensionsStarRating(
+  props: AreteansExtensionsStarRatingProps,
+) {
+  const {
     getPConnect,
     placeholder,
     validatemessage,
@@ -87,9 +114,19 @@ function AreteansExtensionsStarRating(props: AreteansExtensionsStarRatingProps) 
     additionalProps = {},
     displayMode,
     displayAsStatus,
-    variant = 'inline',
+    variant = "inline",
     hasSuggestions = false,
-    isTableFormatter = false
+    isTableFormatter = false,
+    allowHalf,
+    showRatingNumber,
+    starCount,
+    fullColor,
+    halfColor,
+    emptyColor,
+    labels,
+    animationScale,
+    showClear,
+    rtl,
   } = props;
   const { formatter } = props;
   const pConn = getPConnect();
@@ -101,27 +138,27 @@ function AreteansExtensionsStarRating(props: AreteansExtensionsStarRatingProps) 
 
   let { value, readOnly = false, required = false, disabled = false } = props;
   [readOnly, required, disabled] = [readOnly, required, disabled].map(
-    (prop) => prop === true || (typeof prop === 'string' && prop === 'true')
+    (prop) => prop === true || (typeof prop === "string" && prop === "true"),
   );
 
   const [inputValue, setInputValue] = useState(value);
-  const [status, setStatus] = useState(hasSuggestions ? 'pending' : undefined);
+  const [status, setStatus] = useState(hasSuggestions ? "pending" : undefined);
 
-   // cast status
-  let myStatus: 'success' | 'warning' | 'error' | 'pending';
+  // cast status
+  let myStatus: "success" | "warning" | "error" | "pending";
   // eslint-disable-next-line prefer-const
-  myStatus = status as 'success' | 'warning' | 'error' | 'pending';
+  myStatus = status as "success" | "warning" | "error" | "pending";
 
   useEffect(() => setInputValue(value), [value]);
 
   useEffect(() => {
-    if (validatemessage !== '') {
-      setStatus('error');
+    if (validatemessage !== "") {
+      setStatus("error");
     }
     if (hasSuggestions) {
-      setStatus('pending');
-    } else if (!hasSuggestions && myStatus !== 'success') {
-      setStatus(validatemessage !== '' ? 'error' : undefined);
+      setStatus("pending");
+    } else if (!hasSuggestions && myStatus !== "success") {
+      setStatus(validatemessage !== "" ? "error" : undefined);
     }
   }, [validatemessage, hasSuggestions, myStatus]);
 
@@ -134,44 +171,55 @@ function AreteansExtensionsStarRating(props: AreteansExtensionsStarRatingProps) 
 
     // Fall into this scenario for case summary, default to stacked status
     if (!displayMode) {
-      return <FieldValueList variant='stacked' data-testid={testId} fields={[{ id: 'status', name: label, value }]} />;
+      return (
+        <FieldValueList
+          variant="stacked"
+          data-testid={testId}
+          fields={[{ id: "status", name: label, value }]}
+        />
+      );
     }
   }
 
-  if (displayMode === 'LABELS_LEFT' || displayMode === 'DISPLAY_ONLY') {
-    let displayComp = value || <span aria-hidden='true'>&ndash;&ndash;</span>;
+  if (displayMode === "LABELS_LEFT" || displayMode === "DISPLAY_ONLY") {
+    let displayComp = value || <span aria-hidden="true">&ndash;&ndash;</span>;
     if (isTableFormatter && formatExists(formatter)) {
       displayComp = textFormatter(formatter, value);
     }
-    return displayMode === 'DISPLAY_ONLY' ? (
-      <StyledAreteansExtensionsStarRatingWrapper> {displayComp} </StyledAreteansExtensionsStarRatingWrapper>
+    return displayMode === "DISPLAY_ONLY" ? (
+      <StyledAreteansExtensionsStarRatingWrapper>
+        {" "}
+        {displayComp}{" "}
+      </StyledAreteansExtensionsStarRatingWrapper>
     ) : (
       <StyledAreteansExtensionsStarRatingWrapper>
-      <FieldValueList
-        variant={hideLabel ? 'stacked' : variant}
-        data-testid={testId}
-        fields={[{ id: '1', name: hideLabel ? '' : label, value: displayComp }]}
-      />
+        <FieldValueList
+          variant={hideLabel ? "stacked" : variant}
+          data-testid={testId}
+          fields={[
+            { id: "1", name: hideLabel ? "" : label, value: displayComp },
+          ]}
+        />
       </StyledAreteansExtensionsStarRatingWrapper>
     );
   }
 
-  if (displayMode === 'STACKED_LARGE_VAL') {
-    const isValDefined = typeof value !== 'undefined' && value !== '';
+  if (displayMode === "STACKED_LARGE_VAL") {
+    const isValDefined = typeof value !== "undefined" && value !== "";
     const val = isValDefined ? (
-      <Text variant='h1' as='span'>
+      <Text variant="h1" as="span">
         {value}
       </Text>
     ) : (
-      ''
+      ""
     );
     return (
       <StyledAreteansExtensionsStarRatingWrapper>
-      <FieldValueList
-        variant='stacked'
-        data-testid={testId}
-        fields={[{ id: '2', name: hideLabel ? '' : label, value: val }]}
-      />
+        <FieldValueList
+          variant="stacked"
+          data-testid={testId}
+          fields={[{ id: "2", name: hideLabel ? "" : label, value: val }]}
+        />
       </StyledAreteansExtensionsStarRatingWrapper>
     );
   }
@@ -182,16 +230,16 @@ function AreteansExtensionsStarRating(props: AreteansExtensionsStarRatingProps) 
     }
     setInputValue(event.target.value);
     if (value !== event.target.value) {
-      handleEvent(actions, 'change', propName, event.target.value);
+      handleEvent(actions, "change", propName, event.target.value);
       hasValueChange.current = true;
     }
   };
 
   const handleBlur = (event: any) => {
     if ((!value || hasValueChange.current) && !readOnly) {
-      handleEvent(actions, 'blur', propName, event.target.value);
+      handleEvent(actions, "blur", propName, event.target.value);
       if (hasSuggestions) {
-        pConn.ignoreSuggestion('');
+        pConn.ignoreSuggestion("");
       }
       hasValueChange.current = false;
     }
@@ -199,27 +247,27 @@ function AreteansExtensionsStarRating(props: AreteansExtensionsStarRatingProps) 
 
   return (
     <StyledAreteansExtensionsStarRatingWrapper>
-    <Input
-      {...additionalProps}
-      type='text'
-      label={label}
-      labelHidden={hideLabel}
-      info={validatemessage || helperText}
-      data-testid={testId}
-      value={inputValue}
-      status={myStatus}
-      placeholder={placeholder}
-      disabled={disabled}
-      readOnly={readOnly}
-      required={required}
-      maxLength={maxLength}
-      onChange={!readOnly ? handleChange : undefined}
-      onBlur={!readOnly ? handleBlur : undefined}
-      onResolveSuggestion={onResolveSuggestionHandler}
-    />
+      <Rating
+        value={inputValue}
+        onChange={(val: number) => {
+          setInputValue(val);
+          handleEvent(actions, "change", propName, val);
+          hasValueChange.current = true;
+        }}
+        readOnly={readOnly}
+        allowHalf={allowHalf}
+        showRatingNumber={showRatingNumber}
+        starCount={starCount}
+        fullColor={fullColor}
+        halfColor={halfColor}
+        emptyColor={emptyColor}
+        labels={labels}
+        animationScale={animationScale}
+        showClear={showClear}
+        rtl={rtl}
+      />
     </StyledAreteansExtensionsStarRatingWrapper>
   );
 }
-
 
 export default withConfiguration(AreteansExtensionsStarRating);

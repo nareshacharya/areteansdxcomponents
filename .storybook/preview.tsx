@@ -1,32 +1,32 @@
-import type { Preview } from '@storybook/react';
+import type { Preview } from "@storybook/react";
 import {
   Configuration,
   LiveLog,
   ModalManager,
   PopoverManager,
   ShortcutManager,
-  Toaster
-} from '@pega/cosmos-react-core';
+  Toaster,
+} from "@pega/cosmos-react-core";
 
 const preview: Preview = {
   parameters: {
-    actions: { argTypesRegex: '^on[A-Z].*' },
+    actions: { argTypesRegex: "^on[A-Z].*" },
     controls: {
       matchers: {
         color: /(background|color)$/i,
-        date: /Date$/i
-      }
+        date: /Date$/i,
+      },
     },
     docs: {
-      source: { type: 'code' }
-    }
+      source: { type: "code" },
+    },
   },
 
   decorators: [
     // Sets up contexts
     (Story, context) => {
       return (
-        <Configuration disableDefaultFontLoading id='Preview'>
+        <Configuration disableDefaultFontLoading id="Preview">
           <ShortcutManager>
             <LiveLog maxLength={context.args.liveLogMaxLength || 50}>
               <PopoverManager>
@@ -40,8 +40,8 @@ const preview: Preview = {
           </ShortcutManager>
         </Configuration>
       );
-    }
-  ]
+    },
+  ],
 };
 
 export default preview;

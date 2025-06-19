@@ -42,7 +42,7 @@ const Rating: React.FC<RatingProps> = ({
 
   const handleClick = (
     e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
-    star: number
+    star: number,
   ) => {
     if (readOnly) return;
     let newRating = star;
@@ -57,7 +57,7 @@ const Rating: React.FC<RatingProps> = ({
 
   const handleKeyDown = (
     e: React.KeyboardEvent<HTMLSpanElement>,
-    star: number
+    star: number,
   ) => {
     if (readOnly) return;
     const currentIndex = star - 1;
