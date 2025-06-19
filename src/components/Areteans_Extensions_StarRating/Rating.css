@@ -1,0 +1,29 @@
+.rating-container {
+  display: flex;
+  gap: 4px;
+  font-size: 24px;
+  color: var(--app-primary-color, #ff9900); /* uses theme color */
+}
+
+.star {
+  cursor: pointer;
+}
+
+.star.selected {
+  font-weight: bold;
+}
+
+.rating-row.readonly {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.star.readonly {
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .rating-container {
+    font-size: 18px;
+  }
+}
